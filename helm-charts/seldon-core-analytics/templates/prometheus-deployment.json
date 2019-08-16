@@ -2,6 +2,60 @@
     "apiVersion": "v1",
     "items": [
         {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+                "name": "prometheus-config-volume-pvc"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "20Gi"
+                    }
+                },
+                "storageClassName": "local-path"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+                "name": "prometheus-rules-volume-pvc"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "20Gi"
+                    }
+                },
+                "storageClassName": "local-path"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+                "name": "prometheus-storage-volume-pvc"
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "20Gi"
+                    }
+                },
+                "storageClassName": "local-path"
+            }
+        },
+        {
             "apiVersion": "extensions/v1beta1",
             "kind": "Deployment",
             "metadata": {
@@ -56,24 +110,22 @@
                         ],
                         "volumes": [
                             {
-                                "configMap": {
-                                    "name": "prometheus-server-conf"
-                                },
-                                "name": "prometheus-config-volume"
+                                "name": "prometheus-config-volume",
+                                "persistentVolumeClaim": {
+                                    "claimName": "prometheus-config-volume-pvc"
+                                }
                             },
                             {
-                                "configMap": {
-                                    "name": "prometheus-rules"
-                                },
-                                "name": "prometheus-rules-volume"
+                                "name": "prometheus-rules-volume",
+                                "persistentVolumeClaim": {
+                                    "claimName": "prometheus-rules-volume-pvc"
+                                }
                             },
                             {
                                 "name": "prometheus-storage-volume",
-                              {{- if .Values.persistence.enabled }}
-                                "persistentVolumeClaim": { "claimName": "seldon-claim" }
-                              {{- else }}
-                                "emptyDir": {}
-                              {{- end -}}
+                                "persistentVolumeClaim": {
+                                    "claimName": "prometheus-storage-volume-pvc"
+                                }
                             }
                         ]
                     }
